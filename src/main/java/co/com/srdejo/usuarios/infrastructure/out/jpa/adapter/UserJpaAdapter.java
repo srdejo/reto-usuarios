@@ -44,5 +44,10 @@ public class UserJpaAdapter implements IUserPersistencePort {
         return userEntityMapper.toUserModelList(entityList);
     }
 
+    @Override
+    public UserModel getByIdAndRole(Long id, RoleEnum roleEnum) {
+        return userEntityMapper.toUserModel(userRepository.findByIdAndRole(id, roleEnum));
+    }
+
 
 }

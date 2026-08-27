@@ -33,4 +33,9 @@ public class OwnerHandler implements IOwnerHandler {
     public List<UserResponseDto> getAllOwners() {
         return userResponseMapper.toUsers(userServicePort.getAllOwners());
     }
+
+    @Override
+    public UserResponseDto getOwnerById(Long id) {
+        return userResponseMapper.toUserResponseDto(userServicePort.getOwner(id));
+    }
 }

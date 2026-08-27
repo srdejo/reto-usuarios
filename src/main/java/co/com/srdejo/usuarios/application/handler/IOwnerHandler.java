@@ -10,4 +10,6 @@ public interface IOwnerHandler {
     void saveOwner(UserRequestDto userRequestDto);
 
     List<UserResponseDto> getAllOwners();
+
+    UserResponseDto getOwnerById(Long id);
 }

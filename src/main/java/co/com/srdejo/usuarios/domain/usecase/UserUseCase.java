@@ -30,5 +30,10 @@ public class UserUseCase implements IUserServicePort {
         return userPersistencePort.getAllUsersByRole(RoleEnum.OWNER);
     }
 
+    @Override
+    public UserModel getOwner(Long id) {
+        return userPersistencePort.getByIdAndRole(id, RoleEnum.OWNER);
+    }
+
 
 }

@@ -111,6 +111,27 @@ class OwnerRestControllerTest {
     }
 
     @Test
+    void getOwnerById_returnsOkWithOwner() throws Exception {
+        UserResponseDto responseDto = new UserResponseDto();
+        responseDto.setId(1L);
+        responseDto.setName("John");
+        when(ownerHandler.getOwnerById(1L)).thenReturn(responseDto);
+
+        mockMvc.perform(get("/api/v1/owners/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("John"));
+    }
+
+    @Test
+    void getOwnerById_whenOwnerDoesNotExist_returns404() throws Exception {
+        when(ownerHandler.getOwnerById(99L)).thenThrow(new NoDataFoundException());
+
+        mockMvc.perform(get("/api/v1/owners/99"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void getAllOwners_returnsOkWithOwnersList() throws Exception {
         UserResponseDto responseDto = new UserResponseDto();
         responseDto.setId(1L);
