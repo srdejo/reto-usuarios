@@ -9,4 +9,6 @@ public interface IUserServicePort {
     void createOwner(UserModel userModel);
 
     List<UserModel> getAllOwners();
+
+    UserModel getOwner(Long id);
 }

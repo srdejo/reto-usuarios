@@ -9,4 +9,5 @@ public interface IUserPersistencePort {
     void saveUser(UserModel userModel);
     UserModel getUserByEmail(String email);
     List<UserModel> getAllUsersByRole(RoleEnum role);
+    UserModel getByIdAndRole(Long id, RoleEnum roleEnum);
 }

@@ -36,6 +36,21 @@ public class OwnerRestController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Get owner by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Owner returned",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseDto.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Owner not found", content = @Content)
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDto> getOwnerById(@PathVariable Long id) {
+        return ResponseEntity.ok(ownerHandler.getOwnerById(id));
+    }
+
     @Operation(summary = "Get all objects")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All objects returned",
