@@ -3,8 +3,10 @@ package co.com.srdejo.usuarios.domain.usecase;
 import co.com.srdejo.usuarios.domain.exception.InvalidAgeException;
 import co.com.srdejo.usuarios.domain.model.PhoneModel;
 import co.com.srdejo.usuarios.domain.model.RoleEnum;
+import co.com.srdejo.usuarios.domain.model.RoleModel;
 import co.com.srdejo.usuarios.domain.model.UserModel;
 import co.com.srdejo.usuarios.domain.spi.IPasswordEncoderPort;
+import co.com.srdejo.usuarios.domain.spi.IRolePersistencePort;
 import co.com.srdejo.usuarios.domain.spi.IUserPersistencePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,11 +31,14 @@ class UserUseCaseTest {
     @Mock
     private IPasswordEncoderPort passwordEncoderPort;
 
+    @Mock
+    private IRolePersistencePort rolePersistencePort;
+
     private UserUseCase userUseCase;
 
     @BeforeEach
     void setUp() {
-        userUseCase = new UserUseCase(userPersistencePort, passwordEncoderPort);
+        userUseCase = new UserUseCase(userPersistencePort, passwordEncoderPort, rolePersistencePort);
     }
 
     private UserModel adultUser() {
@@ -49,11 +54,13 @@ class UserUseCaseTest {
     @Test
     void createOwner_whenUserIsAdult_assignsOwnerRoleEncryptsPasswordAndPersists() {
         UserModel user = adultUser();
+        RoleModel ownerRole = new RoleModel(1L, "OWNER", null);
+        when(rolePersistencePort.findByName(RoleEnum.OWNER.name())).thenReturn(ownerRole);
         when(passwordEncoderPort.encode("rawPassword")).thenReturn("encodedPassword");
 
         userUseCase.createOwner(user);
 
-        assertThat(user.getRole()).isEqualTo(RoleEnum.OWNER);
+        assertThat(user.getRole()).isEqualTo(ownerRole);
         assertThat(user.getPassword()).isEqualTo("encodedPassword");
         verify(userPersistencePort).saveUser(user);
     }

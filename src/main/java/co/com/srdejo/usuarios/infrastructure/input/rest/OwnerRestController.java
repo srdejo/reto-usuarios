@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -30,7 +31,8 @@ public class OwnerRestController {
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "409", description = "Owner already exists", content = @Content)
     })
-    @PostMapping("/")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping()
     public ResponseEntity<Void> saveOwner(@RequestBody @Valid UserRequestDto userRequestDto) {
         ownerHandler.saveOwner(userRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -58,7 +60,7 @@ public class OwnerRestController {
                             array = @ArraySchema(schema = @Schema(implementation = UserResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<List<UserResponseDto>> getAllOwners() {
         return ResponseEntity.ok(ownerHandler.getAllOwners());
     }

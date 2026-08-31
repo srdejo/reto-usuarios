@@ -2,15 +2,20 @@ package co.com.srdejo.usuarios.infrastructure.out.jpa.adapter;
 
 import co.com.srdejo.usuarios.domain.model.PhoneModel;
 import co.com.srdejo.usuarios.domain.model.RoleEnum;
+import co.com.srdejo.usuarios.domain.model.RoleModel;
 import co.com.srdejo.usuarios.domain.model.UserModel;
 import co.com.srdejo.usuarios.infrastructure.exception.NoDataFoundException;
+import co.com.srdejo.usuarios.infrastructure.out.jpa.entity.RoleEntity;
+import co.com.srdejo.usuarios.infrastructure.out.jpa.mapper.IRoleEntityMapperImpl;
 import co.com.srdejo.usuarios.infrastructure.out.jpa.mapper.IUserEntityMapper;
+import co.com.srdejo.usuarios.infrastructure.out.jpa.mapper.IUserEntityMapperImpl;
+import co.com.srdejo.usuarios.infrastructure.out.jpa.repository.IRoleRepository;
 import co.com.srdejo.usuarios.infrastructure.out.jpa.repository.IUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
 
@@ -28,17 +33,26 @@ class UserJpaAdapterIT {
     @Autowired
     private IUserRepository userRepository;
 
+    @Autowired
+    private IRoleRepository roleRepository;
+
     private UserJpaAdapter adapter;
+    private RoleModel ownerRole;
 
     @BeforeEach
     void setUp() {
-        adapter = new UserJpaAdapter(userRepository, Mappers.getMapper(IUserEntityMapper.class));
+        IUserEntityMapper userEntityMapper = new IUserEntityMapperImpl();
+        ReflectionTestUtils.setField(userEntityMapper, "iRoleEntityMapper", new IRoleEntityMapperImpl());
+        adapter = new UserJpaAdapter(userRepository, userEntityMapper);
+        RoleEntity persistedRole = roleRepository.findByName("OWNER")
+                .orElseGet(() -> roleRepository.save(new RoleEntity(null, "OWNER", "Propietario de restaurante", null)));
+        ownerRole = new RoleModel(persistedRole.getId(), persistedRole.getName(), persistedRole.getDescription());
     }
 
     private UserModel newOwner(String email) {
         UserModel user = new UserModel(null, "John", "Doe", "123456", new PhoneModel("+573005698325"),
                 LocalDate.now().minusYears(25), email, "encodedPassword", null);
-        user.becomeOwner();
+        user.becomeOwner(ownerRole);
         return user;
     }
 
@@ -51,7 +65,7 @@ class UserJpaAdapterIT {
         assertThat(found.getId()).isNotNull();
         assertThat(found.getEmail()).isEqualTo("john@doe.com");
         assertThat(found.getPhone().phoneNumber()).isEqualTo("+573005698325");
-        assertThat(found.getRole()).isEqualTo(RoleEnum.OWNER);
+        assertThat(found.getRole().getName()).isEqualTo("OWNER");
     }
 
     @Test

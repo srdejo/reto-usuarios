@@ -1,12 +1,11 @@
 package co.com.srdejo.usuarios.infrastructure.out.jpa.entity;
 
-import co.com.srdejo.usuarios.domain.model.RoleEnum;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -43,7 +42,7 @@ public class UserEntity {
     @Column(length = 100)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private RoleEnum role;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
+    private RoleEntity role;
 }

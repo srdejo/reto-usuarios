@@ -36,8 +36,8 @@ public class UserJpaAdapter implements IUserPersistencePort {
     }
 
     @Override
-    public List<UserModel> getAllUsersByRole(RoleEnum role) {
-        List<UserEntity> entityList = userRepository.findAllByRole(role);
+    public List<UserModel> getAllUsersByRole(RoleEnum roleEnum) {
+        List<UserEntity> entityList = userRepository.findAllByRole_Name(roleEnum.name());
         if (entityList.isEmpty()) {
             throw new NoDataFoundException();
         }
@@ -46,7 +46,7 @@ public class UserJpaAdapter implements IUserPersistencePort {
 
     @Override
     public UserModel getByIdAndRole(Long id, RoleEnum roleEnum) {
-        return userEntityMapper.toUserModel(userRepository.findByIdAndRole(id, roleEnum));
+        return userEntityMapper.toUserModel(userRepository.findByIdAndRole_Name(id, roleEnum.name()));
     }
 
 

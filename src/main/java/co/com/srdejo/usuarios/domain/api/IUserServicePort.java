@@ -11,4 +11,6 @@ public interface IUserServicePort {
     List<UserModel> getAllOwners();
 
     UserModel getOwner(Long id);
+
+    void createEmployee(UserModel userModel);
 }
