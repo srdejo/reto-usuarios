@@ -1,4 +1,4 @@
-package co.com.srdejo.usuarios.infrastructure.out.jpa.adapter;
+package co.com.srdejo.usuarios.infrastructure.out.jwt;
 
 import co.com.srdejo.usuarios.domain.spi.IPasswordEncoderPort;
 import lombok.AllArgsConstructor;

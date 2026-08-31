@@ -1,5 +1,6 @@
 package co.com.srdejo.usuarios.infrastructure.out.jpa.adapter;
 
+import co.com.srdejo.usuarios.infrastructure.out.jwt.PasswordEncoderAdapter;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

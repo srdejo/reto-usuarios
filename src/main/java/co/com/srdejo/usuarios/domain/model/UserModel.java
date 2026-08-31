@@ -20,12 +20,11 @@ public class UserModel {
     private final LocalDate birthDate;
     private final String email;
     private String password;
-    private RoleEnum role;
-
+    private RoleModel role;
 
     public UserModel(Long id, String name, String lastName, String document, PhoneModel phone,
                      LocalDate birthDate, String email, String password,
-                     RoleEnum role) {
+                     RoleModel role) {
 
         this.id = id;
         this.name = name;
@@ -39,9 +38,13 @@ public class UserModel {
     }
 
 
-    public void becomeOwner() {
+    public void becomeOwner(RoleModel role) {
+        assignRole(role);
+    }
+
+    public void assignRole(RoleModel role) {
         validateAdult();
-        this.role = RoleEnum.OWNER;
+        this.role = role;
     }
 
     public void setEncryptedPassword(String password) {

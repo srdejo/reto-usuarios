@@ -19,18 +19,20 @@ class UserModelTest {
     void createOwner_whenUserTurnsAdultToday_setsRoleToOwner() {
         // Edge case: exactly 18 years old today, the boundary must be inclusive.
         UserModel user = userWithBirthDate(LocalDate.now().minusYears(18));
+        RoleModel ownerRole = new RoleModel(1L, "OWNER", null);
 
-        user.becomeOwner();
+        user.becomeOwner(ownerRole);
 
-        assertThat(user.getRole()).isEqualTo(RoleEnum.OWNER);
+        assertThat(user.getRole()).isEqualTo(ownerRole);
     }
 
     @Test
     void createOwner_whenUserTurnsAdultTomorrow_throwsInvalidAgeExceptionAndDoesNotChangeRole() {
         // Edge case: one day short of 18, the most common off-by-one bug in age checks.
         UserModel user = userWithBirthDate(LocalDate.now().minusYears(18).plusDays(1));
+        RoleModel ownerRole = new RoleModel(1L, "OWNER", null);
 
-        assertThatThrownBy(user::becomeOwner)
+        assertThatThrownBy(() -> user.becomeOwner(ownerRole))
                 .isInstanceOf(InvalidAgeException.class);
         assertThat(user.getRole()).isNull();
     }

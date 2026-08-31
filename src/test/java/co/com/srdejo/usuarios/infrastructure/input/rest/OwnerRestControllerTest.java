@@ -3,6 +3,7 @@ package co.com.srdejo.usuarios.infrastructure.input.rest;
 import co.com.srdejo.usuarios.application.dto.response.UserResponseDto;
 import co.com.srdejo.usuarios.application.handler.IOwnerHandler;
 import co.com.srdejo.usuarios.domain.exception.InvalidAgeException;
+import co.com.srdejo.usuarios.domain.spi.ITokenValidatorPort;
 import co.com.srdejo.usuarios.infrastructure.exception.NoDataFoundException;
 import co.com.srdejo.usuarios.infrastructure.exceptionhandler.ControllerAdvisor;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Slice test: exercises the real Bean Validation pipeline on {@link co.com.srdejo.usuarios.application.dto.request.UserRequestDto}
@@ -37,6 +39,9 @@ class OwnerRestControllerTest {
 
     @MockitoBean
     private IOwnerHandler ownerHandler;
+
+    @MockitoBean
+    private ITokenValidatorPort tokenValidatorPort;
 
     private static final String ADULT_BIRTH_DATE = LocalDate.now().minusYears(25).toString();
 
@@ -57,7 +62,7 @@ class OwnerRestControllerTest {
 
     @Test
     void saveOwner_withValidPayload_returns201AndInvokesHandler() throws Exception {
-        mockMvc.perform(post("/api/v1/owners/")
+        mockMvc.perform(post("/api/v1/owners")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRequestJson(ADULT_BIRTH_DATE)))
                 .andExpect(status().isCreated());
@@ -88,7 +93,7 @@ class OwnerRestControllerTest {
             String caseName, java.util.function.UnaryOperator<String> mutation) throws Exception {
         String payload = mutation.apply(validRequestJson(ADULT_BIRTH_DATE));
 
-        mockMvc.perform(post("/api/v1/owners/")
+        mockMvc.perform(post("/api/v1/owners")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isBadRequest());
@@ -103,7 +108,7 @@ class OwnerRestControllerTest {
         doThrow(new InvalidAgeException("No cumple con la edad minima requerida"))
                 .when(ownerHandler).saveOwner(any());
 
-        mockMvc.perform(post("/api/v1/owners/")
+        mockMvc.perform(post("/api/v1/owners")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRequestJson(minorBirthDate)))
                 .andExpect(status().isBadRequest())
@@ -138,7 +143,7 @@ class OwnerRestControllerTest {
         responseDto.setName("John");
         when(ownerHandler.getAllOwners()).thenReturn(List.of(responseDto));
 
-        mockMvc.perform(get("/api/v1/owners/"))
+        mockMvc.perform(get("/api/v1/owners"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("John"));
     }
@@ -147,7 +152,7 @@ class OwnerRestControllerTest {
     void getAllOwners_whenNoOwnersExist_returns404() throws Exception {
         when(ownerHandler.getAllOwners()).thenThrow(new NoDataFoundException());
 
-        mockMvc.perform(get("/api/v1/owners/"))
+        mockMvc.perform(get("/api/v1/owners"))
                 .andExpect(status().isNotFound());
     }
 }
