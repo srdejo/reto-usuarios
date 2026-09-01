@@ -4,7 +4,9 @@ import co.com.srdejo.usuarios.domain.model.RoleModel;
 import co.com.srdejo.usuarios.domain.model.UserModel;
 import co.com.srdejo.usuarios.domain.spi.ITokenGeneratorPort;
 import co.com.srdejo.usuarios.domain.spi.ITokenValidatorPort;
+import co.com.srdejo.usuarios.infrastructure.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -47,22 +49,26 @@ public class JwtTokenAdapter implements ITokenGeneratorPort, ITokenValidatorPort
 
     @Override
     public UserModel validateToken(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
 
-        return new UserModel(
-                Long.valueOf(claims.getSubject()),
-                null,
-                null,
-                null,
-                null,
-                null,
-                claims.get("email", String.class),
-                null,
-                new RoleModel(null, claims.get("role", String.class), null)
-        );
+            return new UserModel(
+                    Long.valueOf(claims.getSubject()),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    claims.get("email", String.class),
+                    null,
+                    new RoleModel(null, claims.get("role", String.class), null)
+            );
+        } catch (JwtException | IllegalArgumentException exception) {
+            throw new InvalidTokenException("Token de autenticación inválido o expirado");
+        }
     }
 }
