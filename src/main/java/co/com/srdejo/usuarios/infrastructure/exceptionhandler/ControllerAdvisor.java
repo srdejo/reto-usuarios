@@ -2,6 +2,7 @@ package co.com.srdejo.usuarios.infrastructure.exceptionhandler;
 
 import co.com.srdejo.usuarios.domain.exception.InvalidAgeException;
 import co.com.srdejo.usuarios.domain.exception.InvalidPhoneNumber;
+import co.com.srdejo.usuarios.infrastructure.exception.InvalidTokenException;
 import co.com.srdejo.usuarios.infrastructure.exception.NoDataFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,14 @@ public class ControllerAdvisor {
             RuntimeException exception
     ) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Collections.singletonMap(MESSAGE, exception.getMessage()));
+    }
+
+    @ExceptionHandler({InvalidTokenException.class})
+    public ResponseEntity<Map<String, String>> handleInvalidTokenException(
+            RuntimeException exception
+    ) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Collections.singletonMap(MESSAGE, exception.getMessage()));
     }
 
