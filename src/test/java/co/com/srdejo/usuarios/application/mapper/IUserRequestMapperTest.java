@@ -1,6 +1,6 @@
 package co.com.srdejo.usuarios.application.mapper;
 
-import co.com.srdejo.usuarios.application.dto.request.UserRequestDto;
+import co.com.srdejo.usuarios.application.dto.request.OwnerRequestDto;
 import co.com.srdejo.usuarios.domain.model.UserModel;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -15,15 +15,9 @@ class IUserRequestMapperTest {
 
     @Test
     void toUser_mapsAllRequestFieldsIntoDomainModelAndLeavesRoleUnset() {
-        UserRequestDto dto = new UserRequestDto();
-        dto.setName("John");
-        dto.setLastName("Doe");
-        dto.setDocument("123456");
-        dto.setPhone("+573005698325");
-        dto.setBirthDate(LocalDate.of(1990, 1, 1));
-        dto.setEmail("john@doe.com");
-        dto.setPassword("Secret123");
-        dto.setConfirmPassword("Secret123");
+        OwnerRequestDto dto = new OwnerRequestDto(
+                "John", "Doe", "123456", "+573005698325",
+                LocalDate.of(1990, 1, 1), "john@doe.com", "Secret123", "Secret123");
 
         UserModel userModel = mapper.toUser(dto);
 

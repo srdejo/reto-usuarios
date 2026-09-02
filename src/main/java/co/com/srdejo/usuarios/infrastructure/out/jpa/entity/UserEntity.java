@@ -33,7 +33,7 @@ public class UserEntity {
     @Column(length = 13)
     private String phone;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate birthDate;
 
     @Column(length = 100)

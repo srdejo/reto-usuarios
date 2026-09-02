@@ -22,4 +22,10 @@ public class RoleJpaAdapter implements IRolePersistencePort {
         RoleEntity roleEntity = roleRepository.findByName(name).orElseThrow(NoDataFoundException::new);
         return roleEntityMapper.toRoleModel(roleEntity);
     }
+
+    @Override
+    public RoleModel findById(Long roleId) {
+        RoleEntity roleEntity = roleRepository.findById(roleId).orElseThrow(NoDataFoundException::new);
+        return roleEntityMapper.toRoleModel(roleEntity);
+    }
 }

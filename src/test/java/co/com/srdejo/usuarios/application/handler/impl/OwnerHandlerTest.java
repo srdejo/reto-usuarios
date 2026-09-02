@@ -1,12 +1,14 @@
 package co.com.srdejo.usuarios.application.handler.impl;
 
-import co.com.srdejo.usuarios.application.dto.request.UserRequestDto;
+import co.com.srdejo.usuarios.application.dto.request.OwnerRequestDto;
 import co.com.srdejo.usuarios.application.dto.response.UserResponseDto;
 import co.com.srdejo.usuarios.application.mapper.IUserRequestMapper;
 import co.com.srdejo.usuarios.application.mapper.IUserResponseMapper;
-import co.com.srdejo.usuarios.domain.api.IUserServicePort;
+import co.com.srdejo.usuarios.domain.api.IOwnerServicePort;
+import co.com.srdejo.usuarios.domain.exception.ErrorCodesEnum;
 import co.com.srdejo.usuarios.domain.exception.InvalidAgeException;
 import co.com.srdejo.usuarios.domain.model.PhoneModel;
+import co.com.srdejo.usuarios.domain.model.RoleEnum;
 import co.com.srdejo.usuarios.domain.model.UserModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +27,7 @@ import static org.mockito.Mockito.*;
 class OwnerHandlerTest {
 
     @Mock
-    private IUserServicePort userServicePort;
+    private IOwnerServicePort userServicePort;
 
     @Mock
     private IUserRequestMapper userRequestMapper;
@@ -45,9 +47,15 @@ class OwnerHandlerTest {
                 LocalDate.now().minusYears(25), "john@doe.com", "Secret123", null);
     }
 
+    private OwnerRequestDto ownerRequestDto() {
+        return new OwnerRequestDto(
+                "John", "Doe", "123456", "+573005698325",
+                LocalDate.now().minusYears(25), "john@doe.com", "Secret123", "Secret123");
+    }
+
     @Test
     void saveOwner_mapsRequestDtoAndDelegatesToCreateOwner() {
-        UserRequestDto dto = new UserRequestDto();
+        OwnerRequestDto dto = ownerRequestDto();
         UserModel mappedModel = userModel();
         when(userRequestMapper.toUser(dto)).thenReturn(mappedModel);
 
@@ -59,10 +67,10 @@ class OwnerHandlerTest {
     @Test
     void saveOwner_whenServiceRejectsUnderageUser_propagatesException() {
         // The handler must not swallow domain rule violations coming from the use case.
-        UserRequestDto dto = new UserRequestDto();
+        OwnerRequestDto dto = ownerRequestDto();
         UserModel mappedModel = userModel();
         when(userRequestMapper.toUser(dto)).thenReturn(mappedModel);
-        doThrow(new InvalidAgeException("No cumple con la edad minima requerida"))
+        doThrow(new InvalidAgeException(ErrorCodesEnum.INVALID_AGE))
                 .when(userServicePort).createOwner(mappedModel);
 
         assertThatThrownBy(() -> ownerHandler.saveOwner(dto))
@@ -72,7 +80,8 @@ class OwnerHandlerTest {
     @Test
     void getAllOwners_mapsServiceResultToResponseDtoList() {
         List<UserModel> owners = List.of(userModel());
-        UserResponseDto responseDto = new UserResponseDto();
+        UserResponseDto responseDto = new UserResponseDto(1L, "John", "Doe", "123456",
+                "+573005698325", LocalDate.now().minusYears(25), "john@doe.com", RoleEnum.OWNER);
         when(userServicePort.getAllOwners()).thenReturn(owners);
         when(userResponseMapper.toUsers(owners)).thenReturn(List.of(responseDto));
 

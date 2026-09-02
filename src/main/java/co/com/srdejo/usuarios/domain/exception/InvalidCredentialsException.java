@@ -1,7 +1,12 @@
 package co.com.srdejo.usuarios.domain.exception;
 
-public class InvalidCredentialsException extends RuntimeException {
-    public InvalidCredentialsException(String message) {
-        super(message);
+import lombok.Getter;
+
+@Getter
+public class InvalidCredentialsException extends InvalidException {
+
+    public InvalidCredentialsException(ErrorCodesEnum errorCode) {
+        super(errorCode);
     }
+
 }

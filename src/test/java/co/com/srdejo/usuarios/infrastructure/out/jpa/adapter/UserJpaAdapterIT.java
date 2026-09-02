@@ -9,6 +9,7 @@ import co.com.srdejo.usuarios.infrastructure.out.jpa.entity.RoleEntity;
 import co.com.srdejo.usuarios.infrastructure.out.jpa.mapper.IRoleEntityMapperImpl;
 import co.com.srdejo.usuarios.infrastructure.out.jpa.mapper.IUserEntityMapper;
 import co.com.srdejo.usuarios.infrastructure.out.jpa.mapper.IUserEntityMapperImpl;
+import co.com.srdejo.usuarios.infrastructure.out.jpa.repository.IEmployeeRepository;
 import co.com.srdejo.usuarios.infrastructure.out.jpa.repository.IRoleRepository;
 import co.com.srdejo.usuarios.infrastructure.out.jpa.repository.IUserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,9 @@ class UserJpaAdapterIT {
     @Autowired
     private IRoleRepository roleRepository;
 
+    @Autowired
+    private IEmployeeRepository employeeRepository;
+
     private UserJpaAdapter adapter;
     private RoleModel ownerRole;
 
@@ -43,7 +47,7 @@ class UserJpaAdapterIT {
     void setUp() {
         IUserEntityMapper userEntityMapper = new IUserEntityMapperImpl();
         ReflectionTestUtils.setField(userEntityMapper, "iRoleEntityMapper", new IRoleEntityMapperImpl());
-        adapter = new UserJpaAdapter(userRepository, userEntityMapper);
+        adapter = new UserJpaAdapter(userRepository, userEntityMapper, employeeRepository);
         RoleEntity persistedRole = roleRepository.findByName("OWNER")
                 .orElseGet(() -> roleRepository.save(new RoleEntity(null, "OWNER", "Propietario de restaurante", null)));
         ownerRole = new RoleModel(persistedRole.getId(), persistedRole.getName(), persistedRole.getDescription());
@@ -53,6 +57,15 @@ class UserJpaAdapterIT {
         UserModel user = new UserModel(null, "John", "Doe", "123456", new PhoneModel("+573005698325"),
                 LocalDate.now().minusYears(25), email, "encodedPassword", null);
         user.becomeOwner(ownerRole);
+        return user;
+    }
+
+    private UserModel newEmployee() {
+        RoleEntity persistedRole = roleRepository.findByName("EMPLOYEE")
+                .orElseGet(() -> roleRepository.save(new RoleEntity(null, "EMPLOYEE", "Empleado de un restaurante", null)));
+        UserModel user = new UserModel(null, "Jane", "Doe", "654321", new PhoneModel("+573005698325"),
+                null, "employee@doe.com", "encodedPassword", null);
+        user.assignRole(new RoleModel(persistedRole.getId(), persistedRole.getName(), persistedRole.getDescription()));
         return user;
     }
 
@@ -72,6 +85,16 @@ class UserJpaAdapterIT {
     void getUserByEmail_whenNoUserMatches_throwsNoDataFoundException() {
         assertThatThrownBy(() -> adapter.getUserByEmail("missing@doe.com"))
                 .isInstanceOf(NoDataFoundException.class);
+    }
+
+    @Test
+    void saveEmployee_persistsUserAndLinksItToTheRestaurantInEmployeesTable() {
+        adapter.saveEmployee(newEmployee(), 10L);
+
+        UserModel savedUser = adapter.getUserByEmail("employee@doe.com");
+        assertThat(savedUser.getId()).isNotNull();
+        assertThat(employeeRepository.findById(savedUser.getId()))
+                .hasValueSatisfying(employee -> assertThat(employee.getRestaurantId()).isEqualTo(10L));
     }
 
     @Test

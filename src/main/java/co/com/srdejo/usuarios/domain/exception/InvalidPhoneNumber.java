@@ -1,7 +1,12 @@
 package co.com.srdejo.usuarios.domain.exception;
 
-public class InvalidPhoneNumber extends RuntimeException {
-    public InvalidPhoneNumber(String message) {
-        super(message);
+import lombok.Getter;
+
+@Getter
+public class InvalidPhoneNumber extends InvalidException {
+
+    public InvalidPhoneNumber(ErrorCodesEnum errorCode) {
+        super(errorCode);
     }
+
 }

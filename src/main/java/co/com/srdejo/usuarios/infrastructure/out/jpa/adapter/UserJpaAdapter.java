@@ -4,8 +4,10 @@ import co.com.srdejo.usuarios.domain.model.RoleEnum;
 import co.com.srdejo.usuarios.domain.model.UserModel;
 import co.com.srdejo.usuarios.domain.spi.IUserPersistencePort;
 import co.com.srdejo.usuarios.infrastructure.exception.NoDataFoundException;
+import co.com.srdejo.usuarios.infrastructure.out.jpa.entity.EmployeeEntity;
 import co.com.srdejo.usuarios.infrastructure.out.jpa.entity.UserEntity;
 import co.com.srdejo.usuarios.infrastructure.out.jpa.mapper.IUserEntityMapper;
+import co.com.srdejo.usuarios.infrastructure.out.jpa.repository.IEmployeeRepository;
 import co.com.srdejo.usuarios.infrastructure.out.jpa.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +19,7 @@ public class UserJpaAdapter implements IUserPersistencePort {
 
     private final IUserRepository userRepository;
     private final IUserEntityMapper userEntityMapper;
+    private final IEmployeeRepository employeeRepository;
 
 
     @Override
@@ -24,6 +27,14 @@ public class UserJpaAdapter implements IUserPersistencePort {
         UserEntity userEntity = userEntityMapper.toEntity(userModel);
         userEntity = userRepository.save(userEntity);
         userEntityMapper.toUserModel(userEntity);
+    }
+
+    @Override
+    public void saveEmployee(UserModel userModel, Long restaurantId) {
+        UserEntity userEntity = userEntityMapper.toEntity(userModel);
+        userEntity = userRepository.save(userEntity);
+
+        employeeRepository.save(new EmployeeEntity(userEntity.getId(), restaurantId));
     }
 
     @Override

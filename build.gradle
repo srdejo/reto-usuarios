@@ -38,6 +38,7 @@ ext {
 	postgresqlVersion = "42.7.13"
 	ioJWTVersion = "0.13.0"
 	flywayVersion = "13.4.0"
+	openfeignVersion = "5.0.3"
 }
 
 dependencies {
@@ -51,6 +52,7 @@ dependencies {
 	implementation "io.jsonwebtoken:jjwt-api:${ioJWTVersion}"
 	implementation "org.springframework.boot:spring-boot-starter-flyway:${springBootVersion}"
 	implementation "org.flywaydb:flyway-database-postgresql:${flywayVersion}"
+	implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${openfeignVersion}"
 
 	developmentOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
 	testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
