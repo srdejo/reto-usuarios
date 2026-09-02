@@ -1,5 +1,6 @@
 package co.com.srdejo.usuarios.domain.model;
 
+import co.com.srdejo.usuarios.domain.exception.ErrorCodesEnum;
 import co.com.srdejo.usuarios.domain.exception.InvalidAgeException;
 import lombok.Getter;
 
@@ -10,7 +11,6 @@ import java.time.Period;
 public class UserModel {
 
     private static final int ADULT_AGE = 18;
-    private static final String INVALID_AGE_MESSAGE = "No cumple con la edad minima requerida";
 
     private final Long id;
     private final String name;
@@ -39,11 +39,11 @@ public class UserModel {
 
 
     public void becomeOwner(RoleModel role) {
+        validateAdult();
         assignRole(role);
     }
 
     public void assignRole(RoleModel role) {
-        validateAdult();
         this.role = role;
     }
 
@@ -55,7 +55,7 @@ public class UserModel {
         int age = Period.between(birthDate, LocalDate.now()).getYears();
 
         if (age < ADULT_AGE) {
-            throw new InvalidAgeException(INVALID_AGE_MESSAGE);
+            throw new InvalidAgeException(ErrorCodesEnum.INVALID_AGE);
         }
     }
 }

@@ -2,7 +2,7 @@ package co.com.srdejo.usuarios.application.handler;
 
 import co.com.srdejo.usuarios.application.dto.request.UserRequestDto;
 
-public interface IEmployeeHandler {
+public interface IUserHandler {
 
-    void saveEmployee(UserRequestDto userRequestDto);
+    void saveEmployee(UserRequestDto userRequestDto, Long restaurantId);
 }

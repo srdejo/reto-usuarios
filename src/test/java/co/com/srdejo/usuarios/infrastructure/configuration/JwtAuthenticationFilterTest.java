@@ -3,6 +3,7 @@ package co.com.srdejo.usuarios.infrastructure.configuration;
 import co.com.srdejo.usuarios.domain.model.RoleModel;
 import co.com.srdejo.usuarios.domain.model.UserModel;
 import co.com.srdejo.usuarios.domain.spi.ITokenValidatorPort;
+import co.com.srdejo.usuarios.domain.exception.ErrorCodesEnum;
 import co.com.srdejo.usuarios.infrastructure.exception.InvalidTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -71,7 +72,7 @@ class JwtAuthenticationFilterTest {
     @Test
     void doFilterInternal_withInvalidToken_clearsSecurityContext() throws Exception {
         when(request.getHeader("Authorization")).thenReturn("Bearer invalid-token");
-        when(tokenValidatorPort.validateToken("invalid-token")).thenThrow(new InvalidTokenException("invalid token"));
+        when(tokenValidatorPort.validateToken("invalid-token")).thenThrow(new InvalidTokenException(ErrorCodesEnum.INVALID_TOKEN));
 
         filter.doFilterInternal(request, response, filterChain);
 

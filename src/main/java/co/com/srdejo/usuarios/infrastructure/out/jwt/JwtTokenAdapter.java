@@ -1,5 +1,6 @@
 package co.com.srdejo.usuarios.infrastructure.out.jwt;
 
+import co.com.srdejo.usuarios.domain.exception.ErrorCodesEnum;
 import co.com.srdejo.usuarios.domain.model.RoleModel;
 import co.com.srdejo.usuarios.domain.model.UserModel;
 import co.com.srdejo.usuarios.domain.spi.ITokenGeneratorPort;
@@ -68,7 +69,7 @@ public class JwtTokenAdapter implements ITokenGeneratorPort, ITokenValidatorPort
                     new RoleModel(null, claims.get("role", String.class), null)
             );
         } catch (JwtException | IllegalArgumentException exception) {
-            throw new InvalidTokenException("Token de autenticación inválido o expirado");
+            throw new InvalidTokenException(ErrorCodesEnum.INVALID_TOKEN);
         }
     }
 }

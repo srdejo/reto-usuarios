@@ -1,6 +1,6 @@
 package co.com.srdejo.usuarios.infrastructure.input.rest;
 
-import co.com.srdejo.usuarios.application.dto.request.UserRequestDto;
+import co.com.srdejo.usuarios.application.dto.request.OwnerRequestDto;
 import co.com.srdejo.usuarios.application.dto.response.UserResponseDto;
 import co.com.srdejo.usuarios.application.handler.IOwnerHandler;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,8 +33,8 @@ public class OwnerRestController {
     })
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
-    public ResponseEntity<Void> saveOwner(@RequestBody @Valid UserRequestDto userRequestDto) {
-        ownerHandler.saveOwner(userRequestDto);
+    public ResponseEntity<Void> saveOwner(@RequestBody @Valid OwnerRequestDto ownerRequestDto) {
+        ownerHandler.saveOwner(ownerRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

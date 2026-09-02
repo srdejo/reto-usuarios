@@ -19,6 +19,14 @@ spring:
     enabled: true
     locations: classpath:db/migration
 
+  cloud:
+    compatibility-verifier:
+      enabled: false
+
+feign-url:
+  plazoleta: ${PLAZOLETA_URL:http://localhost:8082}/api/v1
+  restaurants: ${feign-url.plazoleta}/restaurants
+
 jwt:
   secret: ${JWT_SECRET:una-clave-secreta-de-al-menos-32-bytes}
   expiration: 3600000 # 1 hora en milisegundos

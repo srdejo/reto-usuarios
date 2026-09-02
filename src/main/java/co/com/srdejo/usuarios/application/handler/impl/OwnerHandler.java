@@ -1,11 +1,11 @@
 package co.com.srdejo.usuarios.application.handler.impl;
 
-import co.com.srdejo.usuarios.application.dto.request.UserRequestDto;
+import co.com.srdejo.usuarios.application.dto.request.OwnerRequestDto;
 import co.com.srdejo.usuarios.application.dto.response.UserResponseDto;
 import co.com.srdejo.usuarios.application.handler.IOwnerHandler;
 import co.com.srdejo.usuarios.application.mapper.IUserRequestMapper;
 import co.com.srdejo.usuarios.application.mapper.IUserResponseMapper;
-import co.com.srdejo.usuarios.domain.api.IUserServicePort;
+import co.com.srdejo.usuarios.domain.api.IOwnerServicePort;
 import co.com.srdejo.usuarios.domain.model.UserModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,23 +19,23 @@ import java.util.List;
 public class OwnerHandler implements IOwnerHandler {
 
 
-    private final IUserServicePort userServicePort;
+    private final IOwnerServicePort ownerServicePort;
     private final IUserRequestMapper userRequestMapper;
     private final IUserResponseMapper userResponseMapper;
 
     @Override
-    public void saveOwner(UserRequestDto userRequestDto) {
-        UserModel userModel = userRequestMapper.toUser(userRequestDto);
-        userServicePort.createOwner(userModel);
+    public void saveOwner(OwnerRequestDto ownerRequestDto) {
+        UserModel userModel = userRequestMapper.toUser(ownerRequestDto);
+        ownerServicePort.createOwner(userModel);
     }
 
     @Override
     public List<UserResponseDto> getAllOwners() {
-        return userResponseMapper.toUsers(userServicePort.getAllOwners());
+        return userResponseMapper.toUsers(ownerServicePort.getAllOwners());
     }
 
     @Override
     public UserResponseDto getOwnerById(Long id) {
-        return userResponseMapper.toUserResponseDto(userServicePort.getOwner(id));
+        return userResponseMapper.toUserResponseDto(ownerServicePort.getOwner(id));
     }
 }

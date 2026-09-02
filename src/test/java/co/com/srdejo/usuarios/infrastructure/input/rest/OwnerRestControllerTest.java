@@ -1,7 +1,9 @@
 package co.com.srdejo.usuarios.infrastructure.input.rest;
 
+import co.com.srdejo.usuarios.application.dto.request.OwnerRequestDto;
 import co.com.srdejo.usuarios.application.dto.response.UserResponseDto;
 import co.com.srdejo.usuarios.application.handler.IOwnerHandler;
+import co.com.srdejo.usuarios.domain.exception.ErrorCodesEnum;
 import co.com.srdejo.usuarios.domain.exception.InvalidAgeException;
 import co.com.srdejo.usuarios.domain.spi.ITokenValidatorPort;
 import co.com.srdejo.usuarios.infrastructure.exception.NoDataFoundException;
@@ -28,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Slice test: exercises the real Bean Validation pipeline on {@link co.com.srdejo.usuarios.application.dto.request.UserRequestDto}
+ * Slice test: exercises the real Bean Validation pipeline on {@link OwnerRequestDto}
  * plus {@link ControllerAdvisor}, which unit tests on the handler/use case cannot cover.
  */
 @WebMvcTest(controllers = OwnerRestController.class)
@@ -105,7 +107,7 @@ class OwnerRestControllerTest {
     void saveOwner_whenUserIsUnderage_returns400WithDomainMessage() throws Exception {
         // AC #4: bean validation passes (birthDate is present) but the domain rule rejects a minor.
         String minorBirthDate = LocalDate.now().minusYears(10).toString();
-        doThrow(new InvalidAgeException("No cumple con la edad minima requerida"))
+        doThrow(new InvalidAgeException(ErrorCodesEnum.INVALID_AGE))
                 .when(ownerHandler).saveOwner(any());
 
         mockMvc.perform(post("/api/v1/owners")
@@ -117,9 +119,8 @@ class OwnerRestControllerTest {
 
     @Test
     void getOwnerById_returnsOkWithOwner() throws Exception {
-        UserResponseDto responseDto = new UserResponseDto();
-        responseDto.setId(1L);
-        responseDto.setName("John");
+        UserResponseDto responseDto = new UserResponseDto(1L, "John", "Doe", "123456",
+                "+573005698325", LocalDate.now().minusYears(25), "john@doe.com", null);
         when(ownerHandler.getOwnerById(1L)).thenReturn(responseDto);
 
         mockMvc.perform(get("/api/v1/owners/1"))
@@ -138,9 +139,8 @@ class OwnerRestControllerTest {
 
     @Test
     void getAllOwners_returnsOkWithOwnersList() throws Exception {
-        UserResponseDto responseDto = new UserResponseDto();
-        responseDto.setId(1L);
-        responseDto.setName("John");
+        UserResponseDto responseDto = new UserResponseDto(1L, "John", "Doe", "123456",
+                "+573005698325", LocalDate.now().minusYears(25), "john@doe.com", null);
         when(ownerHandler.getAllOwners()).thenReturn(List.of(responseDto));
 
         mockMvc.perform(get("/api/v1/owners"))
