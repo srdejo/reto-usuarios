@@ -1,5 +1,6 @@
 package co.com.srdejo.usuarios.application.handler.impl;
 
+import co.com.srdejo.usuarios.application.dto.request.CustomerRequestDto;
 import co.com.srdejo.usuarios.application.dto.request.UserRequestDto;
 import co.com.srdejo.usuarios.application.handler.IUserHandler;
 import co.com.srdejo.usuarios.application.mapper.IUserRequestMapper;
@@ -21,5 +22,11 @@ public class UserHandler implements IUserHandler {
     public void saveEmployee(UserRequestDto userRequestDto, Long restaurantId) {
         UserModel userModel = userRequestMapper.toUser(userRequestDto);
         userServicePort.createEmployee(userModel, userRequestDto.roleId(), restaurantId);
+    }
+
+    @Override
+    public void saveCustomer(CustomerRequestDto customerRequestDto) {
+        UserModel userModel = userRequestMapper.toUser(customerRequestDto);
+        userServicePort.createCustomer(userModel);
     }
 }

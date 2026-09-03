@@ -1,5 +1,6 @@
 package co.com.srdejo.usuarios.application.mapper;
 
+import co.com.srdejo.usuarios.application.dto.request.CustomerRequestDto;
 import co.com.srdejo.usuarios.application.dto.request.OwnerRequestDto;
 import co.com.srdejo.usuarios.application.dto.request.UserRequestDto;
 import co.com.srdejo.usuarios.domain.model.PhoneModel;
@@ -12,6 +13,7 @@ import org.mapstruct.ReportingPolicy;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface IUserRequestMapper {
 
+    UserModel toUser(CustomerRequestDto customerRequestDto);
     UserModel toUser(OwnerRequestDto ownerRequestDto);
     UserModel toUser(UserRequestDto userRequestDto);
     default PhoneModel map(String phone) {
