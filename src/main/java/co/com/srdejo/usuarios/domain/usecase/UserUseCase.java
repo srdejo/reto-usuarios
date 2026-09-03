@@ -7,13 +7,11 @@ import co.com.srdejo.usuarios.domain.exception.UnauthorizedException;
 import co.com.srdejo.usuarios.domain.model.RoleEnum;
 import co.com.srdejo.usuarios.domain.model.RoleModel;
 import co.com.srdejo.usuarios.domain.model.UserModel;
+import co.com.srdejo.usuarios.domain.spi.IAuthenticatedUserPort;
 import co.com.srdejo.usuarios.domain.spi.IPasswordEncoderPort;
 import co.com.srdejo.usuarios.domain.spi.IRestaurantClientPort;
 import co.com.srdejo.usuarios.domain.spi.IRolePersistencePort;
 import co.com.srdejo.usuarios.domain.spi.IUserPersistencePort;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.util.Objects;
 
 public class UserUseCase implements IUserServicePort {
 
@@ -21,18 +19,21 @@ public class UserUseCase implements IUserServicePort {
     private final IPasswordEncoderPort passwordEncoderPort;
     private final IRolePersistencePort rolePersistencePort;
     private final IRestaurantClientPort restaurantClientPort;
+    private final IAuthenticatedUserPort authenticatedUserPort;
 
     public UserUseCase(IUserPersistencePort userPersistencePort, IPasswordEncoderPort passwordEncoderPort,
-                        IRolePersistencePort rolePersistencePort, IRestaurantClientPort restaurantClientPort) {
+                        IRolePersistencePort rolePersistencePort, IRestaurantClientPort restaurantClientPort,
+                        IAuthenticatedUserPort authenticatedUserPort) {
         this.userPersistencePort = userPersistencePort;
         this.passwordEncoderPort = passwordEncoderPort;
         this.rolePersistencePort = rolePersistencePort;
         this.restaurantClientPort = restaurantClientPort;
+        this.authenticatedUserPort = authenticatedUserPort;
     }
 
     @Override
     public void createEmployee(UserModel userModel, Long roleId, Long restaurantId) {
-        Long authenticatedOwnerId = (Long) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
+        Long authenticatedOwnerId = authenticatedUserPort.getAuthenticatedUserId();
         Long restaurantOwnerId = restaurantClientPort.getOwnerId(restaurantId);
         if (!restaurantOwnerId.equals(authenticatedOwnerId)) {
             throw new UnauthorizedException(ErrorCodesEnum.OWNER_NOT_AUTHORIZED);

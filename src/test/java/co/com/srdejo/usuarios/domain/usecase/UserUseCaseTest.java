@@ -4,6 +4,7 @@ import co.com.srdejo.usuarios.domain.exception.UnauthorizedException;
 import co.com.srdejo.usuarios.domain.model.PhoneModel;
 import co.com.srdejo.usuarios.domain.model.RoleModel;
 import co.com.srdejo.usuarios.domain.model.UserModel;
+import co.com.srdejo.usuarios.domain.spi.IAuthenticatedUserPort;
 import co.com.srdejo.usuarios.domain.spi.IPasswordEncoderPort;
 import co.com.srdejo.usuarios.domain.spi.IRestaurantClientPort;
 import co.com.srdejo.usuarios.domain.spi.IRolePersistencePort;
@@ -13,11 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,11 +37,14 @@ class UserUseCaseTest {
     @Mock
     private IRestaurantClientPort restaurantClientPort;
 
+    @Mock
+    private IAuthenticatedUserPort authenticatedUserPort;
+
     private UserUseCase userUseCase;
 
     @BeforeEach
     void setUp() {
-        userUseCase = new UserUseCase(userPersistencePort, passwordEncoderPort, rolePersistencePort, restaurantClientPort);
+        userUseCase = new UserUseCase(userPersistencePort, passwordEncoderPort, rolePersistencePort, restaurantClientPort, authenticatedUserPort);
     }
 
     private UserModel adultUser() {
@@ -51,14 +52,9 @@ class UserUseCaseTest {
                 LocalDate.now().minusYears(25), "john@doe.com", "rawPassword", null);
     }
 
-    private void authenticateAs(Long userId) {
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(userId, null, List.of()));
-    }
-
     @Test
     void createEmployee_whenAuthenticatedOwnerOwnsRestaurant_assignsRoleEncryptsPasswordAndPersists() {
-        authenticateAs(99L);
+        when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(99L);
         UserModel user = adultUser();
         RoleModel employeeRole = new RoleModel(2L, "EMPLOYEE", null);
         when(restaurantClientPort.getOwnerId(10L)).thenReturn(99L);
@@ -74,7 +70,7 @@ class UserUseCaseTest {
 
     @Test
     void createEmployee_whenAuthenticatedOwnerDoesNotOwnRestaurant_throwsAndNeverPersists() {
-        authenticateAs(1L);
+        when(authenticatedUserPort.getAuthenticatedUserId()).thenReturn(1L);
         UserModel user = adultUser();
         when(restaurantClientPort.getOwnerId(10L)).thenReturn(99L);
 

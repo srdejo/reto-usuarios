@@ -6,7 +6,7 @@ import co.com.srdejo.usuarios.domain.model.UserModel;
 import java.util.List;
 
 public interface IUserPersistencePort {
-    void saveUser(UserModel userModel);
+    UserModel saveUser(UserModel userModel);
     void saveEmployee(UserModel userModel, Long restaurantId);
     UserModel getUserByEmail(String email);
     List<UserModel> getAllUsersByRole(RoleEnum role);

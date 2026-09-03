@@ -17,6 +17,7 @@ import co.com.srdejo.usuarios.infrastructure.out.jpa.repository.IEmployeeReposit
 import co.com.srdejo.usuarios.infrastructure.out.jpa.repository.IRoleRepository;
 import co.com.srdejo.usuarios.infrastructure.out.jpa.repository.IUserRepository;
 import co.com.srdejo.usuarios.infrastructure.out.jwt.JwtTokenAdapter;
+import co.com.srdejo.usuarios.infrastructure.out.security.SecurityContextUserAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -57,7 +58,12 @@ public class BeanConfiguration {
 
     @Bean
     public IUserServicePort userServicePort() {
-        return new UserUseCase(userPersistencePort(), passwordEncoderPort, rolePersistencePort(), restaurantClientPort());
+        return new UserUseCase(userPersistencePort(), passwordEncoderPort, rolePersistencePort(), restaurantClientPort(), authenticatedUserPort());
+    }
+
+    @Bean
+    public IAuthenticatedUserPort authenticatedUserPort() {
+        return new SecurityContextUserAdapter();
     }
 
     @Bean
