@@ -9,6 +9,7 @@ public interface IUserPersistencePort {
     UserModel saveUser(UserModel userModel);
     void saveEmployee(UserModel userModel, Long restaurantId);
     UserModel getUserByEmail(String email);
+    boolean existsByEmail(String email);
     List<UserModel> getAllUsersByRole(RoleEnum role);
     UserModel getByIdAndRole(Long id, RoleEnum roleEnum);
 }

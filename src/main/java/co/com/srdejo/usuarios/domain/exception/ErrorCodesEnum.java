@@ -16,7 +16,8 @@ public enum ErrorCodesEnum {
     INVALID_RESTAURANT_ID("ERR04", "El restaurante indicado no existe"),
     INVALID_ROLE("ERR05", "El role indicado no coincide con la accion solicitada"),
     SERVICE_UNAVAILABLE("HTTP1", "El servicio %s no responde"),
-    VALIDATION_ERROR("VAL01", "Error de validacion en los datos enviados");
+    VALIDATION_ERROR("VAL01", "Error de validacion en los datos enviados"),
+    EMAIL_ALREADY_EXISTS("ERR06", "Ya existe un usuario registrado con este correo");
 
     private final String code;
     private final String description;

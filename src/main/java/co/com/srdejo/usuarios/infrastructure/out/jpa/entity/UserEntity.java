@@ -36,7 +36,7 @@ public class UserEntity {
     @Column
     private LocalDate birthDate;
 
-    @Column(length = 100)
+    @Column(length = 100, unique = true)
     private String email;
 
     @Column(length = 100)

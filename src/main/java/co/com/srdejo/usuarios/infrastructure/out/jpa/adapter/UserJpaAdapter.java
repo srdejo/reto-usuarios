@@ -45,6 +45,11 @@ public class UserJpaAdapter implements IUserPersistencePort {
     }
 
     @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Override
     public List<UserModel> getAllUsersByRole(RoleEnum roleEnum) {
         List<UserEntity> entityList = userRepository.findAllByRole_Name(roleEnum.name());
         if (entityList.isEmpty()) {

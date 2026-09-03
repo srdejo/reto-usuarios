@@ -34,7 +34,7 @@ public class ControllerAdvisor {
     }
 
     @ExceptionHandler({InvalidAgeException.class, InvalidPhoneNumber.class, InvalidRestaurantException.class,
-            InvalidRolException.class})
+            InvalidRolException.class, EmailAlreadyExistsException.class})
     public ResponseEntity<Map<String, Object>> handleDomainException(InvalidException exception) {
         return getMapResponseEntity(HttpStatus.BAD_REQUEST, exception.getError());
     }

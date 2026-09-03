@@ -1,6 +1,7 @@
 package co.com.srdejo.usuarios.domain.usecase;
 
 import co.com.srdejo.usuarios.domain.api.IUserServicePort;
+import co.com.srdejo.usuarios.domain.exception.EmailAlreadyExistsException;
 import co.com.srdejo.usuarios.domain.exception.ErrorCodesEnum;
 import co.com.srdejo.usuarios.domain.exception.InvalidRolException;
 import co.com.srdejo.usuarios.domain.exception.UnauthorizedException;
@@ -38,6 +39,9 @@ public class UserUseCase implements IUserServicePort {
         if (!restaurantOwnerId.equals(authenticatedOwnerId)) {
             throw new UnauthorizedException(ErrorCodesEnum.OWNER_NOT_AUTHORIZED);
         }
+        if (userPersistencePort.existsByEmail(userModel.getEmail())) {
+            throw new EmailAlreadyExistsException(ErrorCodesEnum.EMAIL_ALREADY_EXISTS);
+        }
         RoleModel role = rolePersistencePort.findById(roleId);
         if (! role.getName().equals(RoleEnum.EMPLOYEE.name())) {
             throw new InvalidRolException(ErrorCodesEnum.INVALID_ROLE);
@@ -45,5 +49,16 @@ public class UserUseCase implements IUserServicePort {
         userModel.assignRole(role);
         userModel.setEncryptedPassword(passwordEncoderPort.encode(userModel.getPassword()));
         userPersistencePort.saveEmployee(userModel, restaurantId);
+    }
+
+    @Override
+    public void createCustomer(UserModel userModel) {
+        if (userPersistencePort.existsByEmail(userModel.getEmail())) {
+            throw new EmailAlreadyExistsException(ErrorCodesEnum.EMAIL_ALREADY_EXISTS);
+        }
+        RoleModel role = rolePersistencePort.findByName(RoleEnum.CUSTOMER.name());
+        userModel.assignRole(role);
+        userModel.setEncryptedPassword(passwordEncoderPort.encode(userModel.getPassword()));
+        userPersistencePort.saveUser(userModel);
     }
 }
