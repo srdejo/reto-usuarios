@@ -5,6 +5,7 @@ import co.com.srdejo.usuarios.domain.exception.EmailAlreadyExistsException;
 import co.com.srdejo.usuarios.domain.exception.ErrorCodesEnum;
 import co.com.srdejo.usuarios.domain.exception.InvalidRolException;
 import co.com.srdejo.usuarios.domain.exception.UnauthorizedException;
+import co.com.srdejo.usuarios.domain.model.EmployeeModel;
 import co.com.srdejo.usuarios.domain.model.RoleEnum;
 import co.com.srdejo.usuarios.domain.model.RoleModel;
 import co.com.srdejo.usuarios.domain.model.UserModel;
@@ -60,5 +61,11 @@ public class UserUseCase implements IUserServicePort {
         userModel.assignRole(role);
         userModel.setEncryptedPassword(passwordEncoderPort.encode(userModel.getPassword()));
         userPersistencePort.saveUser(userModel);
+    }
+
+    @Override
+    public EmployeeModel getAuthenticatedEmployee() {
+        Long authenticatedUserId = authenticatedUserPort.getAuthenticatedUserId();
+        return userPersistencePort.getEmployee(authenticatedUserId);
     }
 }

@@ -2,9 +2,12 @@ package co.com.srdejo.usuarios.application.handler.impl;
 
 import co.com.srdejo.usuarios.application.dto.request.CustomerRequestDto;
 import co.com.srdejo.usuarios.application.dto.request.UserRequestDto;
+import co.com.srdejo.usuarios.application.dto.response.EmployeeResponseDto;
 import co.com.srdejo.usuarios.application.handler.IUserHandler;
 import co.com.srdejo.usuarios.application.mapper.IUserRequestMapper;
+import co.com.srdejo.usuarios.application.mapper.IUserResponseMapper;
 import co.com.srdejo.usuarios.domain.api.IUserServicePort;
+import co.com.srdejo.usuarios.domain.model.EmployeeModel;
 import co.com.srdejo.usuarios.domain.model.UserModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ public class UserHandler implements IUserHandler {
 
     private final IUserServicePort userServicePort;
     private final IUserRequestMapper userRequestMapper;
+    private final IUserResponseMapper userResponseMapper;
 
     @Override
     public void saveEmployee(UserRequestDto userRequestDto, Long restaurantId) {
@@ -28,5 +32,11 @@ public class UserHandler implements IUserHandler {
     public void saveCustomer(CustomerRequestDto customerRequestDto) {
         UserModel userModel = userRequestMapper.toUser(customerRequestDto);
         userServicePort.createCustomer(userModel);
+    }
+
+    @Override
+    public EmployeeResponseDto getAuthenticatedEmployee() {
+        EmployeeModel employeeModel = userServicePort.getAuthenticatedEmployee();
+        return userResponseMapper.toEmployeeResponseDto(employeeModel);
     }
 }
