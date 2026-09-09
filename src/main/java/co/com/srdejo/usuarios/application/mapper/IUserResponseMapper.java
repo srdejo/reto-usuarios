@@ -1,6 +1,8 @@
 package co.com.srdejo.usuarios.application.mapper;
 
+import co.com.srdejo.usuarios.application.dto.response.EmployeeResponseDto;
 import co.com.srdejo.usuarios.application.dto.response.UserResponseDto;
+import co.com.srdejo.usuarios.domain.model.EmployeeModel;
 import co.com.srdejo.usuarios.domain.model.PhoneModel;
 import co.com.srdejo.usuarios.domain.model.UserModel;
 import org.mapstruct.Mapper;
@@ -22,4 +24,7 @@ public interface IUserResponseMapper {
     }
 
     List<UserResponseDto> toUsers(List<UserModel> allOwners);
+
+    @Mapping(target = "role", source = "role.name")
+    EmployeeResponseDto toEmployeeResponseDto(EmployeeModel employeeModel);
 }

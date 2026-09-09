@@ -1,6 +1,7 @@
 package co.com.srdejo.usuarios.infrastructure.input.rest;
 
 import co.com.srdejo.usuarios.application.dto.request.UserRequestDto;
+import co.com.srdejo.usuarios.application.dto.response.EmployeeResponseDto;
 import co.com.srdejo.usuarios.application.handler.IUserHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,5 +33,17 @@ public class UserRestController {
                                           @RequestBody @Valid UserRequestDto userRequestDto) {
         userHandler.saveEmployee(userRequestDto, restaurantId);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Get the authenticated employee, including the restaurant they belong to")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Employee found"),
+            @ApiResponse(responseCode = "403", description = "Authenticated user is not an employee", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Employee not found", content = @Content)
+    })
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    @GetMapping("/employees/me")
+    public ResponseEntity<EmployeeResponseDto> getAuthenticatedEmployee() {
+        return ResponseEntity.ok(userHandler.getAuthenticatedEmployee());
     }
 }

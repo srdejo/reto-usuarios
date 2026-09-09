@@ -1,5 +1,6 @@
 package co.com.srdejo.usuarios.domain.spi;
 
+import co.com.srdejo.usuarios.domain.model.EmployeeModel;
 import co.com.srdejo.usuarios.domain.model.RoleEnum;
 import co.com.srdejo.usuarios.domain.model.UserModel;
 
@@ -12,4 +13,5 @@ public interface IUserPersistencePort {
     boolean existsByEmail(String email);
     List<UserModel> getAllUsersByRole(RoleEnum role);
     UserModel getByIdAndRole(Long id, RoleEnum roleEnum);
+    EmployeeModel getEmployee(Long id);
 }

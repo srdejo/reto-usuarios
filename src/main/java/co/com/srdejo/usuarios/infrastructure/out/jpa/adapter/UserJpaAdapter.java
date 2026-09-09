@@ -1,5 +1,6 @@
 package co.com.srdejo.usuarios.infrastructure.out.jpa.adapter;
 
+import co.com.srdejo.usuarios.domain.model.EmployeeModel;
 import co.com.srdejo.usuarios.domain.model.RoleEnum;
 import co.com.srdejo.usuarios.domain.model.UserModel;
 import co.com.srdejo.usuarios.domain.spi.IUserPersistencePort;
@@ -63,5 +64,12 @@ public class UserJpaAdapter implements IUserPersistencePort {
         return userEntityMapper.toUserModel(userRepository.findByIdAndRole_Name(id, roleEnum.name()));
     }
 
+    @Override
+    public EmployeeModel getEmployee(Long id) {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(NoDataFoundException::new);
+        EmployeeEntity employeeEntity = employeeRepository.findById(id).orElseThrow(NoDataFoundException::new);
+        UserModel userModel = userEntityMapper.toUserModel(userEntity);
+        return new EmployeeModel(userModel, employeeEntity.getRestaurantId());
+    }
 
 }
