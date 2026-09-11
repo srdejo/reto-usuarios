@@ -2,6 +2,7 @@ package co.com.srdejo.usuarios.infrastructure.input.rest;
 
 import co.com.srdejo.usuarios.application.dto.request.UserRequestDto;
 import co.com.srdejo.usuarios.application.dto.response.EmployeeResponseDto;
+import co.com.srdejo.usuarios.application.dto.response.UserResponseDto;
 import co.com.srdejo.usuarios.application.handler.IUserHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -45,5 +46,10 @@ public class UserRestController {
     @GetMapping("/employees/me")
     public ResponseEntity<EmployeeResponseDto> getAuthenticatedEmployee() {
         return ResponseEntity.ok(userHandler.getAuthenticatedEmployee());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userHandler.getUserById(id));
     }
 }

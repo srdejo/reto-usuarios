@@ -68,4 +68,9 @@ public class UserUseCase implements IUserServicePort {
         Long authenticatedUserId = authenticatedUserPort.getAuthenticatedUserId();
         return userPersistencePort.getEmployee(authenticatedUserId);
     }
+
+    @Override
+    public UserModel getUserById(Long id) {
+        return userPersistencePort.getUserById(id);
+    }
 }

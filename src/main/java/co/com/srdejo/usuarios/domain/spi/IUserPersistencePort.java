@@ -14,4 +14,5 @@ public interface IUserPersistencePort {
     List<UserModel> getAllUsersByRole(RoleEnum role);
     UserModel getByIdAndRole(Long id, RoleEnum roleEnum);
     EmployeeModel getEmployee(Long id);
+    UserModel getUserById(Long id);
 }

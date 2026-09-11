@@ -10,4 +10,6 @@ public interface IUserServicePort {
     void createCustomer(UserModel userModel);
 
     EmployeeModel getAuthenticatedEmployee();
+
+    UserModel getUserById(Long id);
 }

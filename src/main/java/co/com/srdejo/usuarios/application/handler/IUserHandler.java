@@ -3,6 +3,7 @@ package co.com.srdejo.usuarios.application.handler;
 import co.com.srdejo.usuarios.application.dto.request.CustomerRequestDto;
 import co.com.srdejo.usuarios.application.dto.request.UserRequestDto;
 import co.com.srdejo.usuarios.application.dto.response.EmployeeResponseDto;
+import co.com.srdejo.usuarios.application.dto.response.UserResponseDto;
 
 public interface IUserHandler {
 
@@ -11,4 +12,6 @@ public interface IUserHandler {
     void saveCustomer(CustomerRequestDto customerRequestDto);
 
     EmployeeResponseDto getAuthenticatedEmployee();
+
+    UserResponseDto getUserById(Long id);
 }

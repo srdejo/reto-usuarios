@@ -72,4 +72,9 @@ public class UserJpaAdapter implements IUserPersistencePort {
         return new EmployeeModel(userModel, employeeEntity.getRestaurantId());
     }
 
+    @Override
+    public UserModel getUserById(Long id) {
+        return userEntityMapper.toUserModel(userRepository.findById(id).orElseThrow(NoDataFoundException::new));
+    }
+
 }

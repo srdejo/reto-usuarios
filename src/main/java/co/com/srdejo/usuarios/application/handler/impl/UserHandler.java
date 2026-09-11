@@ -3,6 +3,7 @@ package co.com.srdejo.usuarios.application.handler.impl;
 import co.com.srdejo.usuarios.application.dto.request.CustomerRequestDto;
 import co.com.srdejo.usuarios.application.dto.request.UserRequestDto;
 import co.com.srdejo.usuarios.application.dto.response.EmployeeResponseDto;
+import co.com.srdejo.usuarios.application.dto.response.UserResponseDto;
 import co.com.srdejo.usuarios.application.handler.IUserHandler;
 import co.com.srdejo.usuarios.application.mapper.IUserRequestMapper;
 import co.com.srdejo.usuarios.application.mapper.IUserResponseMapper;
@@ -38,5 +39,10 @@ public class UserHandler implements IUserHandler {
     public EmployeeResponseDto getAuthenticatedEmployee() {
         EmployeeModel employeeModel = userServicePort.getAuthenticatedEmployee();
         return userResponseMapper.toEmployeeResponseDto(employeeModel);
+    }
+
+    @Override
+    public UserResponseDto getUserById(Long id) {
+        return userResponseMapper.toUserResponseDto(userServicePort.getUserById(id));
     }
 }
