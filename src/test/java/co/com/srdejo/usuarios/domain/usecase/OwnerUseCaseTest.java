@@ -1,5 +1,6 @@
 package co.com.srdejo.usuarios.domain.usecase;
 
+import co.com.srdejo.usuarios.domain.exception.EmailAlreadyExistsException;
 import co.com.srdejo.usuarios.domain.exception.InvalidAgeException;
 import co.com.srdejo.usuarios.domain.model.PhoneModel;
 import co.com.srdejo.usuarios.domain.model.RoleEnum;
@@ -63,6 +64,18 @@ class OwnerUseCaseTest {
         assertThat(user.getRole()).isEqualTo(ownerRole);
         assertThat(user.getPassword()).isEqualTo("encodedPassword");
         verify(userPersistencePort).saveUser(user);
+    }
+
+    @Test
+    void createOwner_whenEmailAlreadyExists_throwsAndNeverPersists() {
+        UserModel user = adultUser();
+        when(userPersistencePort.existsByEmail(user.getEmail())).thenReturn(true);
+
+        assertThatThrownBy(() -> ownerUseCase.createOwner(user))
+                .isInstanceOf(EmailAlreadyExistsException.class);
+
+        verifyNoInteractions(passwordEncoderPort);
+        verify(userPersistencePort, never()).saveUser(any());
     }
 
     @Test

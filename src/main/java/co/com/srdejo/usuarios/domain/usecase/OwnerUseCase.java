@@ -1,6 +1,8 @@
 package co.com.srdejo.usuarios.domain.usecase;
 
 import co.com.srdejo.usuarios.domain.api.IOwnerServicePort;
+import co.com.srdejo.usuarios.domain.exception.EmailAlreadyExistsException;
+import co.com.srdejo.usuarios.domain.exception.ErrorCodesEnum;
 import co.com.srdejo.usuarios.domain.model.RoleEnum;
 import co.com.srdejo.usuarios.domain.model.UserModel;
 import co.com.srdejo.usuarios.domain.spi.IPasswordEncoderPort;
@@ -24,6 +26,9 @@ public class OwnerUseCase implements IOwnerServicePort {
 
     @Override
     public void createOwner(UserModel userModel) {
+        if (userPersistencePort.existsByEmail(userModel.getEmail())) {
+            throw new EmailAlreadyExistsException(ErrorCodesEnum.EMAIL_ALREADY_EXISTS);
+        }
         userModel.becomeOwner(rolePersistencePort.findByName(RoleEnum.OWNER.name()));
         userModel.setEncryptedPassword(passwordEncoderPort.encode(userModel.getPassword()));
         userPersistencePort.saveUser(userModel);
